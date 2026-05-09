@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>温馨助眠答题 - 第六版（华为Chrome修复版）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'HarmonyOS Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #fbe9e7;
+      background-image: radial-gradient(circle at 20% 30%, #fff3e0 0%, #f8bbd0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      color: #5d4037;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 245, 238, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
+      padding: 24px 20px;
+      box-shadow: 0 20px 40px rgba(180, 120, 100, 0.25), inset 0 1px 0 rgba(255,255,255,0.8);
+      border: 1px solid rgba(255, 220, 200, 0.7);
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: #bf5b4c;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.6);
+      padding: 10px 14px;
+      border-radius: 18px;
+    }
+    .setting-row label {
+      font-size: 16px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .setting-row input {
+      width: 70px;
+      padding: 8px 10px;
+      border: 1px solid #e0c0b0;
+      border-radius: 12px;
+      background: #fff9f5;
+      font-size: 18px;
+      text-align: center;
+      color: #5d4037;
+      outline: none;
+      transition: 0.2s;
+    }
+    .setting-row input:focus {
+      border-color: #ff8a65;
+      box-shadow: 0 0 0 3px rgba(255,138,101,0.2);
+    }
+    .range-section {
+      background: rgba(255,255,255,0.6);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .range-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .range-row:last-child {
+      margin-bottom: 0;
+    }
+    .range-row span {
+      font-size: 16px;
+      font-weight: 500;
+      flex-shrink: 0;
+      width: 60px;
+    }
+    .segmented {
+      display: flex;
+      gap: 4px;
+      background: rgba(210, 180, 170, 0.3);
+      border-radius: 20px;
+      padding: 3px;
+    }
+    .seg-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #8d6e63;
+      cursor: pointer;
+      transition: 0.2s;
+      outline: none;
+      white-space: nowrap;
+    }
+    .seg-btn.active {
+      background: #ff8a65;
+      color: white;
+      box-shadow: 0 2px 6px rgba(255,138,101,0.3);
+    }
+    .seg-btn:active {
+      transform: scale(0.95);
+    }
+    .current-status {
+      background: rgba(255,255,255,0.7);
+      border-radius: 18px;
+      padding: 14px;
+      margin: 16px 0;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 500;
+      color: #8d6e63;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      flex-wrap: wrap;
+    }
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .btn {
+      background: #ffab91;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 500;
+      color: white;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #ff9e80, #ff6e40);
+      box-shadow: 0 6px 14px rgba(255,110,64,0.4);
+      transition: 0.2s;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+    }
+    .btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 3px 8px rgba(255,110,64,0.3);
+    }
+    .btn.stop {
+      background: #bcaaa4;
+      background: linear-gradient(135deg, #bcaaa4, #8d7b75);
+      box-shadow: 0 4px 10px rgba(141,123,117,0.3);
+    }
+    .btn:disabled {
+      background: #bcaaa4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🌙 晚安答题</h1>
+  <div class="setting-row">
+    <label>⏳ 播报后等待秒数</label>
+    <input type="number" id="waitFirst" value="15" min="3" max="60" onfocus="this.select()">
+  </div>
+  <div class="setting-row">
+    <label>💤 继续等待秒数</label>
+    <input type="number" id="waitSecond" value="10" min="3" max="60" onfocus="this.select()">
+  </div>
+  <!-- 全新范围选择区 -->
+  <div class="range-section">
+    <div class="range-row">
+      <span>➕加法</span>
+      <div class="segmented" id="addRange">
+        <button class="seg-btn" data-value="single">个位</button>
+        <button class="seg-btn active" data-value="mixed">混合</button>
+        <button class="seg-btn" data-value="double">十位</button>
+      </div>
+    </div>
+    <div class="range-row">
+      <span>➖减法</span>
+      <div class="segmented" id="subRange">
+        <button class="seg-btn" data-value="single">个位</button>
+        <button class="seg-btn active" data-value="mixed">混合</button>
+        <button class="seg-btn" data-value="double">十位</button>
+      </div>
+    </div>
+    <div class="range-row">
+      <span>✖️乘法</span>
+      <div class="segmented" id="mulRange">
+        <button class="seg-btn" data-value="single">个位</button>
+        <button class="seg-btn active" data-value="mixed">混合</button>
+        <button class="seg-btn" data-value="double">十位</button>
+      </div>
+    </div>
+    <div class="range-row">
+      <span>➗除法</span>
+      <div class="segmented" id="divRange">
+        <button class="seg-btn" data-value="single">个位</button>
+        <button class="seg-btn active" data-value="mixed">混合</button>
+        <button class="seg-btn" data-value="double">十位</button>
+      </div>
+    </div>
+  </div>
+  <div class="current-status" id="statusBox">点击下方开始</div>
+  <div class="buttons">
+    <button class="btn" id="startBtn">🌿 开始出题</button>
+    <button class="btn stop" id="stopBtn">🛌 我要睡了</button>
+  </div>
+</div>
+<script>
+  (function() {
+    // DOM 元素
+    const waitFirstInput = document.getElementById('waitFirst');
+    const waitSecondInput = document.getElementById('waitSecond');
+    const statusBox = document.getElementById('statusBox');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    // 范围分段按钮容器
+    const addRange = document.getElementById('addRange');
+    const subRange = document.getElementById('subRange');
+    const mulRange = document.getElementById('mulRange');
+    const divRange = document.getElementById('divRange');
+    // 全局状态锁
+    let isProcessing = false;
+    let quizRunning = false;
+    // 屏幕常亮
+    let wakeLock = null;
+    let wakeLockSupported = false;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        wakeLockSupported = true;
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          wakeLock.addEventListener('release', () => {
+            wakeLock = null;
+          });
+        } catch (err) {}
+      }
+    }
+    async function releaseWakeLock() {
+      if (wakeLock) {
+        try { await wakeLock.release(); wakeLock = null; } catch (err) {}
+      }
+    }
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && quizRunning && wakeLockSupported && !wakeLock) {
+        await requestWakeLock();
+      }
+    });
+    // 语音相关
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let synth = window.speechSynthesis;
+    let listening = false;
+    let activeTimers = [];
+    let currentQuestion = { text: '', answer: null };
+    let sleepCheckStage = 0;
+    const casualBeforeNext = [
+      "嗯，我看看还有什么题目……",
+      "等一下哦，我想想下一题。",
+      "这题对了呢。",
+      "这题不对呀。",
+      "咱们继续吧。",
+      "再来一题简单点的。",
+      "慢慢来，不着急。",
+      "答得不错嘛。",
+      "咦，还真有点困了……",
+    ];
+    // 获取每个运算的范围设置
+    function getRangeValue(container) {
+      const activeBtn = container.querySelector('.seg-btn.active');
+      return activeBtn ? activeBtn.dataset.value : 'mixed';
+    }
+    function setRangeValue(container, value) {
+      container.querySelectorAll('.seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === value);
+      });
+    }
+    function clearAllTimers() {
+      activeTimers.forEach(t => clearTimeout(t));
+      activeTimers = [];
+    }
+    function saveSettings() {
+      localStorage.setItem('sleepQuiz_waitFirst', waitFirstInput.value);
+      localStorage.setItem('sleepQuiz_waitSecond', waitSecondInput.value);
+      localStorage.setItem('sleepQuiz_addRange', getRangeValue(addRange));
+      localStorage.setItem('sleepQuiz_subRange', getRangeValue(subRange));
+      localStorage.setItem('sleepQuiz_mulRange', getRangeValue(mulRange));
+      localStorage.setItem('sleepQuiz_divRange', getRangeValue(divRange));
+    }
+    function loadSettings() {
+      const wf = localStorage.getItem('sleepQuiz_waitFirst');
+      const ws = localStorage.getItem('sleepQuiz_waitSecond');
+      if (wf) waitFirstInput.value = wf;
+      if (ws) waitSecondInput.value = ws;
+      
+      const savedAdd = localStorage.getItem('sleepQuiz_addRange') || 'mixed';
+      const savedSub = localStorage.getItem('sleepQuiz_subRange') || 'mixed';
+      const savedMul = localStorage.getItem('sleepQuiz_mulRange') || 'mixed';
+      const savedDiv = localStorage.getItem('sleepQuiz_divRange') || 'mixed';
+      
+      setRangeValue(addRange, savedAdd);
+      setRangeValue(subRange, savedSub);
+      setRangeValue(mulRange, savedMul);
+      setRangeValue(divRange, savedDiv);
+    }
+    // 监听设置变化
+    [waitFirstInput, waitSecondInput].forEach(el => {
+      el.addEventListener('change', saveSettings);
+      el.addEventListener('input', saveSettings);
+    });
+    
+    [addRange, subRange, mulRange, divRange].forEach(container => {
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('seg-btn')) {
+          setRangeValue(container, e.target.dataset.value);
+          saveSettings();
+        }
+      });
+    });
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function generateQuestion() {
+      const ops = ['+', '-', '*', '/'];
+      const op = ops[rand(0, ops.length - 1)];
+      let a, b, answer, textOp;
+      let rangeSetting;
+      switch (op) {
+        case '+':
+          rangeSetting = getRangeValue(addRange);
+          textOp = '加';
+          break;
+        case '-':
+          rangeSetting = getRangeValue(subRange);
+          textOp = '减';
+          break;
+        case '*':
+          rangeSetting = getRangeValue(mulRange);
+          textOp = '乘';
+          break;
+        case '/':
+          rangeSetting = getRangeValue(divRange);
+          textOp = '除以';
+          break;
+      }
+      // 根据范围设置生成数字
+      switch (rangeSetting) {
+        case 'single':
+          a = rand(1, 9);
+          b = rand(1, 9);
+          break;
+        case 'mixed':
+          a = rand(1, 99);
+          b = rand(1, 99);
+          break;
+        case 'double':
+          a = rand(10, 99);
+          b = rand(10, 99);
+          break;
+        default:
+          a = rand(1, 99);
+          b = rand(1, 99);
+      }
+      switch (op) {
+        case '+':
+          answer = a + b;
+          break;
+        case '-':
+          if (a < b) [a, b] = [b, a];
+          answer = a - b;
+          break;
+        case '*':
+          if (rangeSetting === 'single') {
+            a = rand(1, 9);
+            b = rand(1, 9);
+          } else if (rangeSetting === 'mixed') {
+            a = rand(1, 20);
+            b = rand(1, 20);
+          } else {
+            a = rand(10, 30);
+            b = rand(10, 30);
+          }
+          answer = a * b;
+          break;
+        case '/':
+          if (rangeSetting === 'single') {
+            b = rand(1, 9);
+            answer = rand(1, 9);
+          } else if (rangeSetting === 'mixed') {
+            b = rand(1, 20);
+            answer = rand(1, 20);
+          } else {
+            b = rand(10, 30);
+            answer = rand(10, 30);
+          }
+          a = b * answer;
+          break;
+      }
+      return { text: `${a} ${textOp} ${b} 等于多少？`, answer: answer };
+    }
+    
+    // ========== 修复1: 优化语音合成函数，解决安卓Chrome时序问题 ==========
+    function speak(text, callback, rate = 0.9, pitch = 1.0) {
+      if (!synth) {
+        if (callback) callback();
+        return;
+      }
+      synth.cancel();
+      // 安卓Chrome需要更长的延迟确保语音合成完全停止
+      setTimeout(() => {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'zh-CN';
+        utter.rate = rate;
+        utter.pitch = pitch;
+        utter.volume = 1;
+        // 增加onboundary事件确保语音正在播放
+        utter.onboundary = () => {};
+        utter.onend = () => { 
+          // 增加额外延迟确保语音合成完全结束
+          setTimeout(() => {
+            if (callback) callback();
+          }, 300);
+        };
+        utter.onerror = () => { 
+          setTimeout(() => {
+            if (callback) callback();
+          }, 300);
+        };
+        synth.speak(utter);
+      }, 150); // 从80ms增加到150ms
+    }
+    
+    // 退出短语检测
+    const exitPhrases = ['不玩了', '不想玩了', '睡觉了', '我要睡了', '晚安'];
+    function isExitPhrase(transcript) {
+      const cleaned = transcript.trim();
+      return exitPhrases.some(phrase => cleaned.includes(phrase));
+    }
+    
+    // ========== 修复2: 优化语音识别清理函数 ==========
+    function forceCleanupRecognition() {
+      if (recognition) {
+        try { 
+          // 安卓Chrome中stop()比abort()更可靠
+          recognition.stop(); 
+          // 增加延迟确保资源释放
+          setTimeout(() => {
+            recognition = null;
+          }, 100);
+        } catch(e) {
+          recognition = null;
+        }
+      }
+      listening = false;
+    }
+    
+    // ========== 修复3: 重写语音识别启动函数，添加权限检查和状态显示 ==========
+    function startListening(onResult, onTimeout, timeoutMs) {
+      if (!SpeechRecognition) {
+        statusBox.innerText = '⚠️ 当前浏览器不支持语音识别';
+        return;
+      }
+      
+      // 先检查麦克风权限状态
+      navigator.permissions.query({name: 'microphone'}).then(permissionStatus => {
+        if (permissionStatus.state !== 'granted') {
+          statusBox.innerText = '🎤 麦克风权限被拒，请点击地址栏左侧🔒重新授权';
+          return;
+        }
+        
+        forceCleanupRecognition();
+        
+        // 增加延迟确保上一次语音识别完全停止
+        setTimeout(() => {
+          recognition = new SpeechRecognition();
+          recognition.lang = 'zh-CN';
+          recognition.interimResults = false;
+          recognition.maxAlternatives = 1;
+          recognition.continuous = false;
+          
+          // 移动版Chrome需要更长的超时时间（最少8秒）
+          const adjustedTimeout = Math.max(timeoutMs, 8000);
+          
+          let timeoutId = setTimeout(() => {
+            if (listening) {
+              try { recognition.stop(); } catch(e) {}
+              listening = false;
+              if (onTimeout) onTimeout();
+            }
+          }, adjustedTimeout);
+          
+          recognition.onresult = (event) => {
+            clearTimeout(timeoutId);
+            const transcript = event.results[0][0].transcript.trim();
+            listening = false;
+            if (isExitPhrase(transcript)) {
+              handleUserRequestExit();
+              return;
+            }
+            if (onResult) onResult(transcript);
+          };
+          
+          recognition.onerror = (event) => {
+            clearTimeout(timeoutId);
+            listening = false;
+            console.error('语音识别错误:', event.error); // 添加调试日志
+            if (event.error === 'no-speech' || event.error === 'aborted') {
+              if (onTimeout) onTimeout();
+            } else if (event.error === 'not-allowed') {
+              statusBox.innerText = '🎤 麦克风权限被拒，请点击地址栏左侧🔒重新授权';
+            } else if (event.error === 'service-not-allowed') {
+              statusBox.innerText = '🎤 语音服务不可用，请检查网络连接';
+            } else {
+              statusBox.innerText = '🎤 麦克风有点问题，请重试';
+            }
+          };
+          
+          recognition.onend = () => { 
+            listening = false; 
+          };
+          
+          try {
+            recognition.start();
+            listening = true;
+            // 显示正在监听状态
+            if (statusBox.innerText.indexOf('(正在听...)') === -1) {
+              statusBox.innerText += ' (正在听...)';
+            }
+          } catch (e) {
+            listening = false;
+            statusBox.innerText = '无法启动语音识别，请刷新页面重试';
+            console.error('启动语音识别失败:', e);
+          }
+        }, 200); // 增加延迟确保资源释放
+      });
+    }
+    
+    function handleUserRequestExit() {
+      if (!quizRunning) return;
+      speak('好的，那我们休息吧，晚安。', async () => {
+        await releaseWakeLock();
+        quizRunning = false;
+        forceCleanupRecognition();
+        clearAllTimers();
+        statusBox.innerText = '🌜 晚安~';
+        isProcessing = false;
+        setTimeout(() => {
+          window.close();
+          if (!window.closed) window.location.href = 'about:blank';
+        }, 500);
+      }, 0.85, 0.95);
+    }
+    function extractNumber(text) {
+      const match = text.match(/\d+/);
+      return match ? parseInt(match[0], 10) : null;
+    }
+    function lockScreenAndExit() {
+      speak('晚安，好好休息吧。', async () => {
+        await releaseWakeLock();
+        setTimeout(() => {
+          window.close();
+          if (!window.closed) window.location.href = 'about:blank';
+        }, 500);
+      }, 0.8, 0.9);
+      quizRunning = false;
+      forceCleanupRecognition();
+      clearAllTimers();
+      statusBox.innerText = '🌜 晚安~';
+      isProcessing = false;
+    }
+    function handleSleepCheck() {
+      if (!quizRunning) return;
+      const waitSecond = parseInt(waitSecondInput.value, 10) || 10;
+      if (sleepCheckStage === 0) {
+        sleepCheckStage = 1;
+        statusBox.innerText = '💭 嗯？睡着了吗？';
+        const phrase = ['睡着了吗？', '还在听吗？', '是不是困啦？'][rand(0, 2)];
+        speak(phrase, () => {
+          if (!quizRunning) return;
+          startListening(
+            (transcript) => {
+              const num = extractNumber(transcript);
+              if (num !== null && currentQuestion.answer !== null) {
+                checkAnswer(num);
+              } else {
+                speak('哦，那我们继续吧。', () => {
+                  if(quizRunning) nextQuestion();
+                }, 0.9, 1.0);
+              }
+              sleepCheckStage = 0;
+            },
+            () => lockScreenAndExit(),
+            waitSecond * 1000
+          );
+        }, 0.85, 0.95);
+      }
+    }
+    function checkAnswer(userAnswer) {
+      if (!quizRunning) return;
+      const correct = (userAnswer === currentQuestion.answer);
+      const feedback = correct ?
+        ['对啦。', '答对了。', '正确。', '嗯，没错。'][rand(0, 3)] :
+        `不对哦，答案是 ${currentQuestion.answer}。`;
+      statusBox.innerText = feedback;
+      speak(feedback, () => {
+        if (!quizRunning) return;
+        if (Math.random() < 0.6) {
+          speak(casualBeforeNext[rand(0, casualBeforeNext.length-1)], () => {
+            if(quizRunning) nextQuestion();
+          }, 0.9, 1.0);
+        } else {
+          nextQuestion();
+        }
+      }, 0.9, 1.0);
+    }
+    
+    // ========== 修复4: 优化出题流程，增加语音合成与识别之间的延迟 ==========
+    function nextQuestion() {
+      if (!quizRunning) return;
+      sleepCheckStage = 0;
+      currentQuestion = generateQuestion();
+      statusBox.innerText = currentQuestion.text;
+      speak(currentQuestion.text, () => {
+        if (!quizRunning) return;
+        const waitFirst = parseInt(waitFirstInput.value, 10) || 15;
+        // 增加额外延迟确保语音合成完全结束
+        setTimeout(() => {
+          startListening(
+            (transcript) => {
+              const num = extractNumber(transcript);
+              if (num !== null) {
+                checkAnswer(num);
+              } else {
+                speak('我没听清数字，再说一遍好吗？', () => {
+                  if (!quizRunning) return;
+                  setTimeout(() => {
+                    startListening(
+                      (t2) => {
+                        const n2 = extractNumber(t2);
+                        if (n2 !== null) checkAnswer(n2);
+                        else {
+                          speak('还是没听清，我们看下一题吧。', () => { if(quizRunning) nextQuestion(); }, 0.9, 1.0);
+                        }
+                      },
+                      () => handleSleepCheck(),
+                      waitFirst * 1000
+                    );
+                  }, 200);
+                }, 0.9, 1.0);
+              }
+            },
+            () => handleSleepCheck(),
+            waitFirst * 1000
+          );
+        }, 200); // 增加额外延迟
+      }, 0.85, 0.95);
+    }
+    
+    async function startQuiz() {
+      if (isProcessing || quizRunning) return;
+      isProcessing = true;
+      try {
+        if (!SpeechRecognition) {
+          statusBox.innerText = '⚠️ 浏览器不支持语音，请用华为浏览器打开';
+          return;
+        }
+        if (!synth) {
+          statusBox.innerText = '语音播报不可用';
+          return;
+        }
+        statusBox.innerText = '准备开始咯……';
+        quizRunning = true;
+        sleepCheckStage = 0;
+        saveSettings();
+        await requestWakeLock();
+        speak('我们来玩个睡前小游戏吧，不想玩了就说不玩了。', () => {
+          nextQuestion();
+        }, 0.9, 0.95);
+      } finally {
+        isProcessing = false;
+      }
+    }
+    async function stopQuiz() {
+      quizRunning = false;
+      forceCleanupRecognition();
+      clearAllTimers();
+      synth.cancel();
+      await releaseWakeLock();
+      statusBox.innerText = '已停止，睡吧🌙';
+      isProcessing = false;
+    }
+    startBtn.addEventListener('click', () => {
+      if (quizRunning) {
+        stopQuiz();
+      } else {
+        startQuiz();
+      }
+    });
+    stopBtn.addEventListener('click', () => {
+      if (quizRunning) {
+        stopQuiz();
+        lockScreenAndExit();
+      } else {
+        speak('晚安，做个好梦。', async () => {
+          await releaseWakeLock();
+          window.close();
+          if(!window.closed) window.location.href = 'about:blank';
+        }, 0.8, 0.9);
+      }
+    });
+    loadSettings();
+    window.addEventListener('beforeunload', () => {
+      forceCleanupRecognition();
+      synth.cancel();
+      releaseWakeLock();
+    });
+  })();
+</script>
+</body>
+</html>
